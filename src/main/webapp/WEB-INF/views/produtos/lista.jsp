@@ -23,7 +23,6 @@
 	                <td>${produto.paginas }</td>
 	            </tr>
 	        </c:forEach>
-	
 	    </table>
 	</body>
 </html>

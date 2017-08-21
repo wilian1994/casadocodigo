@@ -8,6 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import br.com.casadocodigo.loja.controllers.HomeController;
+import br.com.casadocodigo.loja.dao.ProdutoDAO;
 
 @ComponentScan(basePackageClasses={HomeController.class, ProdutoDAO.class}) //Para o spring sabe quais classes ele terá que controlar, ou seja "varrer"
 @EnableWebMvc 
