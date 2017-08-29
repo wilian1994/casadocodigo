@@ -1,7 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="s" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 
 <!DOCTYPE html>
@@ -45,19 +45,20 @@
 </head>
 <body>
 
-  <header id="layout-header">
+	<header id="layout-header">
 		<div class="clearfix container">
-			<a href="/" id="logo">
-			</a>
+			<a href="/" id="logo"> </a>
 			<div id="header-content">
 				<nav id="main-nav">
-					
+
 					<ul class="clearfix">
-						<li><a href="/cart" rel="nofollow">Carrinho</a></li>
+						<li><a href="#">Meu carrinho (${carrinhoCompras.quantidade})</a></li>
 
-						<li><a href="/pages/sobre-a-casa-do-codigo" rel="nofollow">Sobre Nós</a></li>
+						<li><a href="/pages/sobre-a-casa-do-codigo" rel="nofollow">Sobre
+								Nós</a></li>
 
-						<li><a href="/pages/perguntas-frequentes" rel="nofollow">Perguntas Frequentes</a></li>
+						<li><a href="/pages/perguntas-frequentes" rel="nofollow">Perguntas
+								Frequentes</a></li>
 					</ul>
 				</nav>
 			</div>
@@ -82,75 +83,76 @@
 		</ul>
 	</nav>
 
-			
-	<section id="index-section" class="container middle">
-
-		<h1 class="cdc-call">Últimos dias com os preços promocionais. Aproveite!</h1>
-		<ul class="clearfix book-collection">
-
-			<!-- Aqui você fará a repetição -->
-			
-		<c:forEach items="${produtos}" var="produto">
-		
-		    <li>
-		    <a href="${s:mvcUrl('PC#detalhe').arg(0, produto.id).build()}" class="block clearfix">
-		            <h2 class="product-title">${produto.titulo}</h2>
-		            <img width="143"
-		                height="202"
-		                src="https://cdn.shopify.com/s/files/1/0155/7645/products/java8-featured_large.png?v=1411490181"
-		                alt="Java 8 Prático"
-		                title="Java 8 Prático"/>
-		            <small class="buy-button">Compre</small>
-		    </a>
-		    </li>
-		
-		</c:forEach>
-			
-		</ul>
-
-		<h2 class="cdc-call">Diferenciais da Casa do Código</h2>
-
-		<ul id="cdc-diferenciais" class="clearfix">
-			<li class="col-left">
-				<h3>E-books sem DRM. Leia onde quiser</h3>
-				<p>
-					<span class="sprite" id="sprite-drm"></span> Nossos e-books não
-					possuem DRM, ou seja, você pode ler em qualquer computador, tablet
-					e smartphone.
+	<article id="livro-css-eficiente">
+		<header id="product-highlight" class="clearfix">
+			<div id="product-overview" class="container">
+				<img width="280px" height="395px"
+					src="http://cdn.shopify.com/s/files/1/0155/7645/products/css-eficiente-featured_large.png?v=1435245145"
+					class="product-featured-image" />
+				<h1 class="product-title">${produto.titulo }</h1>
+				<p class="product-author">
+					<span class="product-author-link"> </span>
 				</p>
-			</li>
-			<li class="col-right">
-				<h3>Autores de renome na comunidade</h3>
+
+				<p class="book-description">${produto.descricao }</p>
+			</div>
+		</header>
+
+
+		<section class="buy-options clearfix">
+			<form action='<c:url value="/carrinho/add" />' method="post" class="container">
+				<ul id="variants" class="clearfix">
+				 <input type="hidden" name="produtoId" value="${produto.id}" />
+					<c:forEach items="${produto.precos}" var="preco">
+						<li class="buy-option"><input type="radio" name="tipoPreco"
+							class="variant-radio" id="tipoPreco" value="${preco.tipoPreco}"
+							checked="checked" /> <label class="variant-label">
+								${preco.tipoPreco} </label> <small class="compare-at-price">R$ 39,90</small>
+							<p class="variant-price">${preco.valor}</p></li>
+					</c:forEach>
+				</ul>
+				<button type="submit" class="submit-image icon-basket-alt"
+					alt="Compre Agora" title="Compre Agora '${produto.titulo }'"></button>
+
+			</form>
+
+		</section>
+
+		<div class="container">
+			<section class="summary">
+				<ul>
+					<li><h3>
+							E muito mais... <a href='/pages/sumario-java8'>veja o sumário</a>.
+						</h3></li>
+				</ul>
+			</section>
+
+			<section class="data product-detail">
+				<h2 class="section-title">Dados do livro:</h2>
 				<p>
-					<span class="sprite" id="sprite-renome"></span> Autores que
-					participam ativamente na comunidade com Open Source, listas de
-					discussão, grupos e mais.
+					Número de páginas: <span>${produto.paginas }</span>
 				</p>
-			</li>
-			<li class="col-left">
-				<h3>Receba atualizações dos e-books</h3>
+				<p></p>
 				<p>
-					<span class="sprite" id="sprite-atualizacoes"></span> Quando você
-					compra um e-book, automaticamente tem direito às atualizações e
-					correções dele.
+					Data de publicação:
+					<fmt:formatDate value="${produto.dataLancamento.time }"
+						pattern="dd/MM/yyyy" />
 				</p>
-			</li>
-			<li class="col-right">
-				<h3>Livros com curadoria da Caelum</h3>
 				<p>
-					<span class="sprite" id="sprite-caelum"></span> Desenvolvedores
-					experientes que avaliam e revisam os livros constantemente.
+					Encontrou um erro? <a href='/submissao-errata' target='_blank'>Submeta
+						uma errata</a>
 				</p>
-			</li>
-		</ul>
+			</section>
+		</div>
 
+	</article>
 
-
-	</section>
-
-	
 	<footer id="layout-footer">
 		<div class="clearfix container">
+
+
+
+
 			<div id="collections-footer">
 				<!-- cdc-footer -->
 				<p class="footer-title">Coleções de Programação</p>
@@ -199,22 +201,19 @@
 				<!-- social-footer -->
 				<p class="footer-title">Receba as Novidades e Lançamentos</p>
 				<div id="form-newsletter">
-					<form
-						action=""
-						method="POST" id="ss-form" class="form-newsletter">
+					<form action="" method="POST" id="ss-form" class="form-newsletter">
 						<ul>
-							<li><input type="hidden" name="pageNumber" value="0"/><input
-								type="hidden" name="backupCache" value=""/><input
-								type="email" name="entry.0.single" value="" class="ss-q-short"
-								id="entry_0" placeholder="seu@email.com"/></li>
+							<li><input type="hidden" name="pageNumber" value="0" /><input
+								type="hidden" name="backupCache" value="" /><input type="email"
+								name="entry.0.single" value="" class="ss-q-short" id="entry_0"
+								placeholder="seu@email.com" /></li>
 							<li><input type="submit" name="submit"
-								value="Quero Receber!" id="submit-newsletter"/></li>
+								value="Quero Receber!" id="submit-newsletter" /></li>
 						</ul>
 					</form>
 					<ul>
-						<li class="ie8"><a
-							href=""
-							rel="nofollow">Receba as Novidades e Lançamentos</a></li>
+						<li class="ie8"><a href="" rel="nofollow">Receba as
+								Novidades e Lançamentos</a></li>
 					</ul>
 				</div>
 				<ul class="footer-payments">
@@ -224,7 +223,5 @@
 			</div>
 		</div>
 	</footer>
-
 </body>
 </html>
-
