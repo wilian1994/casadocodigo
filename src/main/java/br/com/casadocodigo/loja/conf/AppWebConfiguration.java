@@ -1,5 +1,7 @@
 package br.com.casadocodigo.loja.conf;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.cache.CacheManager;
@@ -13,20 +15,23 @@ import org.springframework.format.datetime.DateFormatter;
 import org.springframework.format.datetime.DateFormatterRegistrar;
 import org.springframework.format.support.DefaultFormattingConversionService;
 import org.springframework.format.support.FormattingConversionService;
+import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
+import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
-
-import com.google.common.cache.CacheBuilder;
 
 import br.com.casadocodigo.loja.controllers.HomeController;
 import br.com.casadocodigo.loja.dao.ProdutoDAO;
 import br.com.casadocodigo.loja.infra.FileSaver;
 import br.com.casadocodigo.loja.models.CarrinhoCompras;
+
+import com.google.common.cache.CacheBuilder;
 
 @ComponentScan(basePackageClasses={HomeController.class, ProdutoDAO.class, FileSaver.class, CarrinhoCompras.class}) //Para o spring sabe quais classes ele terá que controlar, ou seja "varrer"
 @EnableWebMvc 
@@ -38,7 +43,7 @@ public class AppWebConfiguration extends WebMvcConfigurerAdapter{
 		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
 		resolver.setPrefix("/WEB-INF/views/"); //Configura o diretório no qual encontra-se nossas pages
 		resolver.setSuffix(".jsp");  //Configura a extensão do arquivo, evita a necessidade de digitar toda vez o .jsp
-		 resolver.setExposedContextBeanNames("carrinhoCompras");
+		resolver.setExposedContextBeanNames("carrinhoCompras");
 		return resolver;
 	}
 
@@ -54,10 +59,10 @@ public class AppWebConfiguration extends WebMvcConfigurerAdapter{
 
 		return messageSource;
 	}
-	
+
 	@Bean
 	public RestTemplate restTemplate() {
-	        return new RestTemplate();
+		return new RestTemplate();
 	}
 
 	@Override
@@ -79,14 +84,23 @@ public class AppWebConfiguration extends WebMvcConfigurerAdapter{
 	public MultipartResolver multipartResolver(){
 		return new StandardServletMultipartResolver();
 	}
-	
-	@Bean
-    public CacheManager cacheManager() {
-        CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder().maximumSize(100).expireAfterAccess(5, TimeUnit.MINUTES);
-        GuavaCacheManager manager = new GuavaCacheManager();
-        manager.setCacheBuilder(builder);
-        return manager;
-    }
 
+	@Bean
+	public CacheManager cacheManager() {
+		CacheBuilder<Object, Object> builder = CacheBuilder.newBuilder().maximumSize(100).expireAfterAccess(5, TimeUnit.MINUTES);
+		GuavaCacheManager manager = new GuavaCacheManager();
+		manager.setCacheBuilder(builder);
+		return manager;
+	}
+	@Bean
+	public ViewResolver contentNegotiationViewResolver(ContentNegotiationManager manager) {
+		List<ViewResolver> viewResolvers = new ArrayList<>();
+		viewResolvers.add(internalResourceViewResolver());
+		viewResolvers.add(new JsonViewResolver());
+		ContentNegotiatingViewResolver resolver = new ContentNegotiatingViewResolver();
+		resolver.setViewResolvers(viewResolvers );
+		resolver.setContentNegotiationManager(manager);
+		return resolver;
+	}
 
 }
